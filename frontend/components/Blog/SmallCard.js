@@ -4,7 +4,6 @@ import renderHtml from 'react-render-html';
 import moment from 'moment';
 
 const SmallCard = ({ blog }) => {
-  console.log('bloggggg->', blog);
   return (
     <Link href={`/blogs/${blog.slug}`}>
       <Box as="a" pl={5} pr={5} style={{ cursor: "pointer" }}>

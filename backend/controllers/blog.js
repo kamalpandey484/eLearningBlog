@@ -275,7 +275,6 @@ exports.photo = (req, res) => {
 }
 
 exports.listRelatedBlogs = ( req, res ) => {
-  console.log('req.body', req.body);
   const limit = 3;
   const {_id, categories} = req.body;
   Blog.find({_id: {$ne: _id}, categories: {$in: categories}})
