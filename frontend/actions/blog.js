@@ -27,3 +27,11 @@ export const singleBlog = slug => {
       .catch(err => err.response.data)
   )
 }
+
+export const showRelatedBlogs = blog => {
+  return (
+    axios.post(`${API}/blogs-related`,  blog)
+      .then(res => res.data)
+      .catch(err => err.response.data)
+  )
+}

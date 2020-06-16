@@ -129,25 +129,25 @@ exports.listAllBlogsWithCategoriesAndTags = (req, res) => {
     .skip(skip)
     .limit(limit)
     .select('_id title slug excerpt categories tags postedBy createdAt updatedAt')
-    .exec((err, data) => {
+    .exec(async(err, data) => {
       if(err) {
-        return res.status(400).json({
+        return await res.status(400).json({
           error: 'Error while fetching blogs'
         })
       }
       blogs = data;
       Category.find({})
-        .exec((err, category)=>{
+        .exec(async(err, category)=>{
           if(err) {
-            return res.status(400).json({
+            return await res.status(400).json({
               error: 'Error while fetching Categories'
             })
           }
           categories = category;
           Tag.find({})
-            .exec((err, tag)=>{
+            .exec(async(err, tag)=>{
               if(err) {
-                return res.status(400).json({
+                return await res.status(400).json({
                   error: 'Error while fetching Categories'
                 })
               }
@@ -272,4 +272,23 @@ exports.photo = (req, res) => {
       res.set('Content-type', result.photo.contentType);
       return res.send(result.photo.data);
     })
+}
+
+exports.listRelatedBlogs = ( req, res ) => {
+  console.log('req.body', req.body);
+  const limit = 3;
+  const {_id, categories} = req.body;
+  Blog.find({_id: {$ne: _id}, categories: {$in: categories}})
+    .limit(limit)
+    .populate('postedBy', '_id name profile')
+    .select('title slug excerpt postedBy createdAt updatedAt')
+    .exec(async(err, blog) => {
+      if (err) {
+        return await res.status(400).json({
+            error: 'Blogs not found.'
+        });
+      }
+      res.json(blog);
+    })
+
 }

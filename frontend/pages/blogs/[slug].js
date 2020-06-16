@@ -1,12 +1,13 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { useState } from 'react';
-import { singleBlog } from '../../actions/blog';
+import { useState, useEffect } from 'react';
+import { singleBlog, showRelatedBlogs } from '../../actions/blog';
 import { API, DOMAIN, APP_NAME, FB_APP_ID } from '../../config';
 import { Box, Heading, Stack, Tag, TagLabel, Divider, Link as As, Button, Text, Badge} from '@chakra-ui/core';
 import renderHtml from 'react-render-html';
 import moment from 'moment';
+import SmallCard from '../../components/Blog/SmallCard';
 
 const SingleBlog = ({ blog, query }) => {
 
@@ -31,6 +32,23 @@ const SingleBlog = ({ blog, query }) => {
     </Head>
   );
 
+  const [relatedBlogs, setRelatedBlogs] = useState([]);
+
+  const loadRelatedBlogs = () => {
+    showRelatedBlogs(blog)
+      .then(data => {
+        if(data.error) {
+          console.log(data.error);
+        } else {
+          setRelatedBlogs(data);
+        }
+      })
+  }
+
+  useEffect(()=>{
+    loadRelatedBlogs();
+  }, [])
+
   const showBlogCategories = blog =>
     blog.categories.map((category, index) => (
       <Link key={index} href = {`/categories/${category.slug}`}>
@@ -48,6 +66,16 @@ const SingleBlog = ({ blog, query }) => {
         </Badge>
       </Link>
     ))
+  
+  const showAllRelatedBlogs = () => {
+    return (
+      relatedBlogs.map((blog, index) =>
+        <Box key={index} maxW={['100%', '100%', '100%', '30%']} border="1px" borderRadius="md" borderColor="gray.200" p={3}>
+          <SmallCard blog={blog} />
+        </Box>
+      )
+    )
+  }
 
   return (
     <React.Fragment>
@@ -83,6 +111,9 @@ const SingleBlog = ({ blog, query }) => {
                 <Heading as="h3" size="lg" textAlign="center">
                   Related Blogs
                 </Heading>
+                <Box>
+                  { showAllRelatedBlogs()}
+                </Box>
               </Box>
               <Divider />
               <Box pb={[3, 3, 3, 5]} pt={[3, 3, 3, 5]}>
