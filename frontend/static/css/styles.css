@@ -1,0 +1,12 @@
+#nprogress .bar {
+  background: rgb(213, 63, 140) !important;
+  height: 5px;
+}
+
+#nprogress .spinner-icon {
+  display: none !important;
+}
+
+.ql-editor {
+  min-height: 300px;
+}
